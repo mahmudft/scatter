@@ -1,0 +1,7 @@
+django 
+gunicorn 
+djangorestframework
+psycopg2
+django-channels
+celery
+daphne
