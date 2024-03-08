@@ -1,7 +1,12 @@
 django 
 gunicorn 
 djangorestframework
-psycopg2
+psycopg2-binary
 django-channels
 celery
 daphne
+django-rest-knox
+redis
+channels-redis
+django-cors-headers==3.1.0
+Pillow

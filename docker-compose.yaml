@@ -8,47 +8,57 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    user: postgres
+    volumes:
+      - scatter-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: "pg_isready --username=postgres && psql --username=postgres --list"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - scatter-network
   redis:
     image: redis:latest
     container_name: redis
     ports:
       - "6379:6379"
     networks:
-      - app-network-cb
+      - scatter-network
 
   server:
+    container_name: server
+    entrypoint: sh -c "/app/entrypoint.sh"
     build:
       context: ./scatterapi
     ports:
       - 8000:8000
     volumes:
       - ./scatterapi:/app
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
       redis:
         condition: service_started
-  db:
-    image: postgres
-    restart: always
-    user: postgres
-    secrets:
-      - db-password
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=example
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-    expose:
-      - 5432
-    healthcheck:
-      test: [ "CMD", "pg_isready" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    networks:
+      - scatter-network
 volumes:
-  db-data:
-# secrets:
-#   db-password:
-#     file: db/password.txt
+  scatter-db-data:
 
+networks:
+  scatter-network:
+    driver: bridge
