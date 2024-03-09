@@ -22,7 +22,7 @@ export default function Login() {
         if(data.ok){
             console.log(end)
             Toastify({
-                text: "Successfully created an account",
+                text: "Successfully signed into an account",
                 className: "info",
                 style: {
                   background: "linear-gradient(to right, #00b09b, #96c93d)",
@@ -32,7 +32,7 @@ export default function Login() {
               router.push('/')
         }else{
             Toastify({
-                text: "Failed to create an acount",
+                text: "Failed to sign into an acount",
                 className: "error",
                 style: {
                   background: "red",

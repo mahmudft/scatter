@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import { CookiesProvider } from 'next-client-cookies/server';
-
+import { cookies } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +17,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -28,9 +29,11 @@ export default function RootLayout({
             </Link>
       
   
-            <Link href={'#'} className=" text-black font-bold py-2 px-2 rounded-lg">
+            {cookies().get('token') ? <Link href={'/logout'} className=" text-black font-bold py-2 px-2 rounded-lg">
               Logout
-            </Link>
+            </Link> : <Link href={'/login'} className=" text-black font-bold py-2 px-2 rounded-lg">
+              Signin
+            </Link>}
 
         </div>
         {children}
