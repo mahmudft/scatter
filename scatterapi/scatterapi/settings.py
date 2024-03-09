@@ -71,11 +71,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "daphne",
     "django.contrib.staticfiles",
-    "channels",
-    "core",
     "rest_framework",
+    "core",
     "rest_framework.authtoken",
     "knox",
+    "channels",
     "corsheaders",
 ]
 

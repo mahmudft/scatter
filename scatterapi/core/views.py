@@ -1,8 +1,8 @@
 from datetime import timezone
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
 from rest_framework import status, viewsets
 from core.models import Product
+from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes,parser_classes
 from rest_framework.permissions import IsAuthenticated
@@ -77,10 +77,9 @@ def register(request):
 @parser_classes([MultiPartParser,JSONParser ])
 def create_product(request):
     user = User.objects.get(username=request.user)
-    request.data['user'] = user.id
     product_serializer = ProductSerializer(data=request.data)
     if product_serializer.is_valid():
-        product_serializer.save()
+        product_serializer.save(user=user)
         return Response(product_serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

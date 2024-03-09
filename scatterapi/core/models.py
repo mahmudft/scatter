@@ -19,7 +19,6 @@ class Product(models.Model):
         db_table="product"
     
     def save(self, *args, **kwargs):
-        print(self.price, flush=True)
         self.price = float(self.price)
         super().save(*args, **kwargs)
 

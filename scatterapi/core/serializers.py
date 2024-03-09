@@ -18,9 +18,9 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = "__all__"
         depth = 1
-        extra_kwargs = {
-            "owner": {"write_only": True},
-        }
+        # extra_kwargs = {
+        #     "owner": {"write_only": True},
+        # }
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:

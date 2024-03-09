@@ -6,7 +6,9 @@ import { url } from "inspector";
 import Link from "next/link";
 
 async function getData() {
-  const res = await fetch('http://localhost:8000/products/')
+  const res = await fetch('http://localhost:8000/products/', {
+    next: {revalidate:2000}
+  })
   const products: Array<Product> = await res.json()
   return products
 }
