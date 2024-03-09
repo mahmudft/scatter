@@ -79,7 +79,7 @@ def create_product(request):
     user = User.objects.get(username=request.user)
     product_serializer = ProductSerializer(data=request.data)
     if product_serializer.is_valid():
-        product_serializer.save(user=user)
+        product_serializer.save(user=user, visiable=True)
         return Response(product_serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
