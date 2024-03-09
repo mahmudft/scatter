@@ -52,6 +52,7 @@ services:
       - scatter-network
   
   frontend:
+    container_name: scatter-frontend
     build:
       context: ./scatterfrontend
     environment:
