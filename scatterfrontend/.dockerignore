@@ -3,7 +3,8 @@
 #
 # For more help, visit the .dockerignore file reference guide at
 # https://docs.docker.com/go/build-context-dockerignore/
-
+.next/
+node_modules/
 **/.classpath
 **/.dockerignore
 **/.env
