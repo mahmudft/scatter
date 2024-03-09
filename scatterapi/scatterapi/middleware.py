@@ -5,7 +5,7 @@ from rest_framework.authtoken.models import Token
 from asgiref.sync import sync_to_async
 
 
-@database_sync_to_async
+# @database_sync_to_async
 async def get_user_from_context(scope):
     token = parse_qs(scope['query_string'].decode('utf-8')).get('token')[0].encode('ascii')
     tk = Token.objects.get(key=token)
@@ -21,7 +21,6 @@ class QueryAuthMiddleware:
     """
 
     def __init__(self, app):
-        # Store the ASGI application we were passed
         self.app = app
 
     async def __call__(self, scope, receive, send):

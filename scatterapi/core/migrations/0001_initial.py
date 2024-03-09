@@ -22,6 +22,7 @@ class Migration(migrations.Migration):
                 ('description', models.CharField(max_length=300)),
                 ('price', models.FloatField()),
                 ('image', models.ImageField(upload_to='product_images/')),
+                ('contact', models.EmailField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now_add=True)),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),

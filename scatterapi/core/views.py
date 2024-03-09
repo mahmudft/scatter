@@ -5,19 +5,19 @@ from core.models import Product
 from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes,parser_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import MultiPartParser, JSONParser
 from knox.auth import AuthToken
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-
+from django.shortcuts import get_object_or_404
 from .serializers import ProductSerializer, RegisterSerializer
-# Create your views here.
+from core.redconf import redcon
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A viewset for viewing and editing invoices.
     """
 
-    queryset  = Product.objects.all()
+    queryset  = Product.objects.filter(visiable=True).order_by('-created_at')
     serializer_class = ProductSerializer
 
     def list(self, request):
@@ -45,8 +45,9 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 @api_view(["POST"])
-# @throttle_classes([LoginThrottle])
+@parser_classes([MultiPartParser,JSONParser ])
 def login(request):
+    print(request.data, flush=True)
     serializer = AuthTokenSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         user = serializer.validated_data["user"]
@@ -57,22 +58,25 @@ def login(request):
 
 
 @api_view(["POST"])
+@parser_classes([MultiPartParser, JSONParser])
 def register(request):
+    print(request.data, flush=True)
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         user = serializer.save()
         print(user, flush=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    return Response(
+    else:
+        print(serializer.errors, flush=True)
+        return Response(
         serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-@parser_classes([MultiPartParser])
+@parser_classes([MultiPartParser,JSONParser ])
 def create_product(request):
     user = User.objects.get(username=request.user)
     request.data['user'] = user.id
-    # product = Product.objects.create(**request.data, user=user)
     product_serializer = ProductSerializer(data=request.data)
     if product_serializer.is_valid():
         product_serializer.save()
@@ -85,3 +89,21 @@ def create_product(request):
 def profile(request):
     print(request.user, flush=True)
     return Response({}, status=status.HTTP_200_OK)
+
+
+
+@api_view(["GET", "PATCH"])
+@permission_classes([IsAuthenticated])
+def activate_product(request, id):
+        id = redcon.get(id)
+        product = get_object_or_404(Product, id=id)
+        if product.user.username == request.user:
+            if request.method == "GET":
+              return Response({}, status=status.HTTP_200_OK)
+            else:
+                product.save(visiable=True)
+                return Response({}, status=status.HTTP_200_OK)
+        else:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+

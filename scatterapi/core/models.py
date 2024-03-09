@@ -10,6 +10,7 @@ class Product(models.Model):
     description = models.CharField(max_length=300, blank=False, null=False)
     price = models.FloatField(null=False, blank=False)
     image = models.ImageField(upload_to='product_images/')
+    contact = models.EmailField(null=False, blank=False)
     visiable=models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)

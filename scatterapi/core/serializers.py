@@ -1,20 +1,26 @@
 
 from rest_framework import serializers, validators
 from django.contrib.auth.models import User
-from .models import Product
+from .models import Comment, Product
 
-class ProductSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(required=False)
-    visiable = serializers.BooleanField(default=True)
-
+class CommentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Product
+        model = Comment
         fields = "__all__"
         extra_kwargs = {
             "user": {"write_only": True},
         }
 
 
+class ProductSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(many=True, read_only=True)
+    class Meta:
+        model = Product
+        fields = "__all__"
+        depth = 1
+        extra_kwargs = {
+            "owner": {"write_only": True},
+        }
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:

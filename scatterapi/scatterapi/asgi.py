@@ -15,14 +15,14 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "scatterapi.settings")
 
 application = get_asgi_application()
 
-# from channels.routing import ProtocolTypeRouter, URLRouter
-# from channels.auth import AuthMiddlewareStack
-# from .middleware import QueryAuthMiddleware
-# from . import urls 
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
+from .middleware import QueryAuthMiddleware
+from . import urls 
 
-# application = ProtocolTypeRouter(
-#     {
-#         "http": get_asgi_application(),
-#         "websocket": QueryAuthMiddleware(URLRouter(urls.websocket_urlpatterns))
-#     }
-# )
+application = ProtocolTypeRouter(
+    {
+        "http": get_asgi_application(),
+        "websocket": QueryAuthMiddleware(URLRouter(urls.websocket_urlpatterns))
+    }
+)

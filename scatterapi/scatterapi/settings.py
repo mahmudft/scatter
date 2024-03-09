@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+from celery.schedules import crontab
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,11 +29,20 @@ SECRET_KEY = "django-insecure-sxlq2syjaz6c_e-oe$krv6a&5n!a2#+n-b3rpef=dbt#sl@var
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-
+ALLOWED_HOSTS = ["*", "localhost"]
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000"
+]
+CORS_ALLOW_CREDENTIALS = True
 # Application definition
 
+CELERY_BEAT_SCHEDULE = {
+    "database_cleaner": {
+        "task": "core.tasks.check_db_transactions",
+        "schedule": crontab(minute="*/2"),
+    }
+}
 
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 
@@ -59,12 +69,14 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "daphne",
     "django.contrib.staticfiles",
+    "channels",
     "core",
     "rest_framework",
     "rest_framework.authtoken",
     "knox",
-    "channels",
+    "corsheaders",
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -75,6 +87,7 @@ FILE_UPLOAD_HANDLERS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -114,7 +127,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "scatterapi.wsgi.application"
-
+ASGI_APPLICATION = "scatterapi.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

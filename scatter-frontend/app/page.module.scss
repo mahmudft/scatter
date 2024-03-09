@@ -1,0 +1,30 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6rem;
+  min-height: 100vh;
+}
+
+.card{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    width: 400px;
+    height: 400px;
+    gap: 4px;
+}
+
+.cardtitle{
+    width: 200px;
+    height: 200px;
+    border-radius: 8px;
+}
+
+
+.cardbody{
+    width: 200px;
+    height: 200px;
+    border-radius: 8px;
+}

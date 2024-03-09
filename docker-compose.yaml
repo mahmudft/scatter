@@ -35,12 +35,29 @@ services:
       - "6379:6379"
     networks:
       - scatter-network
+  
+  celery-beat:
+    container_name: celery-beat
+    build:
+      context: ./scatterapi
+    command: python -m celery -A scatterapi beat -l info
+    env_file:
+      - ./scatterapi/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - scatter-network
 
   server:
     container_name: server
     entrypoint: sh -c "/app/entrypoint.sh"
     build:
       context: ./scatterapi
+    env_file:
+      - ./scatterapi/.env
     ports:
       - 8000:8000
     volumes:
