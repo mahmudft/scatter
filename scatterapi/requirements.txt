@@ -1,0 +1,12 @@
+django 
+gunicorn 
+djangorestframework
+psycopg2-binary
+channels
+celery
+daphne
+django-rest-knox
+redis
+channels-redis
+django-cors-headers
+Pillow

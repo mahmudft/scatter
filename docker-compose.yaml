@@ -1,0 +1,91 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+# Here the instructions define your application as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    user: postgres
+    volumes:
+      - scatter-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: "pg_isready --username=postgres && psql --username=postgres --list"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - scatter-network
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - scatter-network
+  
+  celery-beat:
+    container_name: celery-beat
+    build:
+      context: ./scatterapi
+    command: python -m celery -A scatterapi beat -l info
+    env_file:
+      - ./scatterapi/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - scatter-network
+  
+  frontend:
+    build:
+      context: ./scatterfrontend
+    environment:
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    networks:
+      - scatter-network
+
+  server:
+    container_name: server
+    entrypoint: sh -c "/app/entrypoint.sh"
+    build:
+      context: ./scatterapi
+    env_file:
+      - ./scatterapi/.env
+    ports:
+      - 8000:8000
+    volumes:
+      - ./scatterapi:/app
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - scatter-network
+volumes:
+  scatter-db-data:
+
+networks:
+  scatter-network:
+    driver: bridge
