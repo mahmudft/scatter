@@ -50,6 +50,16 @@ services:
         condition: service_started
     networks:
       - scatter-network
+  
+  frontend:
+    build:
+      context: ./scatterfrontend
+    environment:
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    networks:
+      - scatter-network
 
   server:
     container_name: server
