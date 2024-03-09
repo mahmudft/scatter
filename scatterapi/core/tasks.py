@@ -28,6 +28,8 @@ def check_db_transactions():
 
    for product in old_products:
       user_email = product.user.email
+      product.visiable = False
+      product.save()
       uid = uuid.uuid4()
       message = f'Link for product activation http://localhost:3000/activate/{uid}'
       redcon.set(uid, product.id)

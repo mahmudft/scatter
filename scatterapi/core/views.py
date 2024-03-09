@@ -1,3 +1,4 @@
+from datetime import timezone
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from rest_framework import status, viewsets
@@ -101,7 +102,7 @@ def activate_product(request, id):
             if request.method == "GET":
               return Response({}, status=status.HTTP_200_OK)
             else:
-                product.save(visiable=True)
+                product.save(visiable=True, updated_at= timezone.now())
                 return Response({}, status=status.HTTP_200_OK)
         else:
             return Response({}, status=status.HTTP_400_BAD_REQUEST)
