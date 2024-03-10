@@ -13,6 +13,8 @@ const reducer = (state: Array<Comment>, action: {type: string, payload: Comment}
     }
   };
 
+
+
 export default function Chat({props}: {props: {id: number, comments:Array<Comment>}}) {
     const cookies = useCookies();
     const [comments, dispatch] = useReducer(reducer, (props.comments || []))
@@ -20,15 +22,19 @@ export default function Chat({props}: {props: {id: number, comments:Array<Commen
     const socket = new WebSocket(`ws://localhost:8000/ws/${props.id}?token=${cookies.get('token')}`)
 
     useEffect(() => {
-        socket.onmessage = function (e) {
-            const box = JSON.parse(e.data)
-            dispatch({type: "Add", payload: box['message']})
-            console.log(box['message']);
+        if (socket) {
+            socket.onmessage = function (e) {
+                const box = JSON.parse(e.data);
+                dispatch({ type: "Add", payload: box['message'] });
+                console.log(box['message']);
+            };
+        }
+        return () => {
+            if (socket && socket.readyState === 1) {
+                socket.close();
+            }
         };
-        // socket.on('chat.message', (message) => {
-        //     setMessages((prevMessages) => [...prevMessages, message]);
-        // });
-    }, []);
+    }, [socket]);
 
     const sendMessage = () => {
         socket.send(JSON.stringify({message: chatRef.current.value}));

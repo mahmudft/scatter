@@ -7,7 +7,11 @@ import Link from "next/link";
 import Chat from "@/app/components/Chat";
 
 async function getData(id: number) {
-  const res = await fetch(`http://localhost:8000/products/${id}`)
+  const res = await fetch(`http://localhost:8000/products/${id}`, {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
   const products: Partial<Product> = await res.json()
   return products
 }

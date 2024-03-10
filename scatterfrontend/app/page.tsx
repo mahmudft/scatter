@@ -7,6 +7,9 @@ import Link from "next/link";
 
 async function getData() {
   const res = await fetch('http://localhost:8000/products/', {
+    headers: {
+      "Content-Type": "application/json"
+    },
     next: {revalidate:2000}
   })
   const products: Array<Product> = await res.json()
@@ -15,7 +18,7 @@ async function getData() {
 
 export default async function Page() {
   const data: Array<Product> = await getData()
-  // console.log(data)
+  console.log(data.length)
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">

@@ -35,13 +35,13 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     def retrieve(self, request, pk=None):
 
         """
-        Retrieve a specific invoice of the authenticated user.
-        :param pk: ID of invoice .
+        Retrieve a specific product.
+        :param pk: ID of product .
         """
 
         queryset = self.queryset.filter(id=pk)
-        invoice = get_object_or_404(queryset, id=pk)
-        serializer = self.get_serializer(invoice)
+        product = get_object_or_404(queryset, id=pk)
+        serializer = self.get_serializer(product)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
