@@ -29,7 +29,6 @@ export default function Page() {
                   background: "linear-gradient(to right, #00b09b, #96c93d)",
                 }
               }).showToast();     
-              document.cookie = `token=${end.token}; path=/`;
               router.push('/')
         }else{
             Toastify({
